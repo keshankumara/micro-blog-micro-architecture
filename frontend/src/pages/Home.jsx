@@ -6,9 +6,7 @@ export default function Home() {
   const [reload, setReload] = useState(false);
 
   return (
-    <div style={{ maxWidth: 600, margin: "0 auto" }}>
-      <h1>Microblog</h1>
-
+    <div>
       <CreatePost onCreated={() => setReload(!reload)} />
       <PostList key={reload} />
     </div>
