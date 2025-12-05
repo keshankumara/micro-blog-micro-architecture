@@ -4,6 +4,9 @@ import api from "../api/apiClient";
 export default function PostList() {
   const [posts, setPosts] = useState([]);
   const [postIdToDelete, setPostIdToDelete] = useState(null);
+  const [postIdToEdit, setPostIdToEdit] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editContent, setEditContent] = useState("");
 
   useEffect(() => {
     api.get("/posts").then(res => setPosts(res.data));
@@ -21,6 +24,15 @@ export default function PostList() {
     }
   }, [postIdToDelete]);
 
+  const handleSaveEdit = () => {
+    api.put(`/posts/${postIdToEdit}`, { title: editTitle, content: editContent }).then(() => {
+      setPosts(prevPosts => prevPosts.map(post => post.id === postIdToEdit ? { ...post, title: editTitle, content: editContent } : post));
+      setPostIdToEdit(null);
+    }).catch(err => {
+      console.error("Error editing post:", err);
+      setPostIdToEdit(null);
+    });
+  };
 
   return (
     <div>
@@ -31,10 +43,21 @@ export default function PostList() {
           key={post.id} 
           style={{ padding: 10, border: "1px solid #ddd", marginBottom: 10 }}
         >
-          <h3>{post.title}</h3>
-          <p>{post.content}</p>
-          <button onClick={() => setPostIdToDelete(post.id)}>Delete</button>
-         
+          {postIdToEdit === post.id ? (
+            <div>
+              <input type="text" placeholder="Title" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+              <textarea placeholder="Content" value={editContent} onChange={(e) => setEditContent(e.target.value)}></textarea>
+              <button onClick={handleSaveEdit}>Save</button>
+              <button onClick={() => setPostIdToEdit(null)}>Cancel</button>
+            </div>
+          ) : (
+            <>
+              <h3>{post.title}</h3>
+              <p>{post.content}</p>
+              <button onClick={() => setPostIdToDelete(post.id)}>Delete</button>
+              <button onClick={() => { setPostIdToEdit(post.id); setEditTitle(post.title); setEditContent(post.content); }}>Edit</button>
+            </>
+          )}
         </div>
       ))}
     </div>

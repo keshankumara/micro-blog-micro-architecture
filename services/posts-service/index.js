@@ -16,7 +16,7 @@ function save(data) {
 }
 
 app.get("/posts", (req, res) => {
-  res.json(load());
+  res.json(load().reverse());
 });
 
 app.post("/posts", (req, res) => {

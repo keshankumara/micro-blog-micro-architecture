@@ -10,7 +10,6 @@ export default function Home() {
       <h1>Microblog</h1>
 
       <CreatePost onCreated={() => setReload(!reload)} />
-
       <PostList key={reload} />
     </div>
   );
